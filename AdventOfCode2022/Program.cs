@@ -1,6 +1,6 @@
 ﻿using AdventOfCode2022.Puzzles;
-    
-Day6.SolutionPart1();
+
+Day7.SolutionPart1();
     
 
 

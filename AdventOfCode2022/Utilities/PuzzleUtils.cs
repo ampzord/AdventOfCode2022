@@ -5,7 +5,7 @@ public static class PuzzleUtils
     {
         string projectPath = Directory.GetCurrentDirectory();
         string fileTargetPath = @"Input\" + filename;
-        string path = Path.GetFullPath(Path.Combine(projectPath, @"..\..\"));
+        string path = Path.GetFullPath(Path.Combine(projectPath, @"..\..\..\"));
         string currentPath = Path.GetFullPath(Path.Combine(path, fileTargetPath));
 
         return currentPath;

@@ -1,58 +1,113 @@
 ﻿using AdventOfCode2022.Utilities;
 using System;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Net.Http.Headers;
 using Microsoft.VisualBasic.FileIO;
 
 namespace AdventOfCode2022.Puzzles;
 
 public static class Day7
 {
-    private static string path = PuzzleUtils.GetFilePath("Day7.txt");
-    
-    //Find the directories with max size of 100_000
-    //Then sum them up altogether
-
+    private static string path = PuzzleUtils.GetFilePath("Day7_Example.txt");
+    private static IEnumerator<string> _enumerator;
+    private static List<string> _allLines = System.IO.File.ReadLines(path).ToList();
+    private static List<string> _auxiliarLines = System.IO.File.ReadLines(path).ToList();
     public static void SolutionPart1()
     {
+        Directory topRoot = new Directory("topRoot");
+        Directory root = new Directory("/", topRoot);
         
-        // $ cd /
-        // $ ls
-        // dir gqlg
-        // dir hchrwstr
-        // dir lswlpt
-        // 189381 mzsnhlf
-        // dir plmdrbn
-
-    }
-    
-    private static void ParseInput()
-    {
-        var lines = System.IO.File.ReadLines(path);
+        //root has 10 files created, not creating new directories..
         
-        Directory root = new Directory();
-        
-        foreach (var line in lines)
+        _enumerator = _allLines.GetEnumerator();
+        while (_enumerator.MoveNext())
         {
+            string line = _enumerator.Current;
+            
+            _allLines = _allLines.Skip(1).ToList();
+            _enumerator = _allLines.GetEnumerator();
+
             if (line.IsCommand())
             {
                 CommandType commandType = GetCommandType(line);
                 switch (commandType)
                 {
                     case CommandType.ListDirectory:
-                        
+                        GetAllValuesAfterListDirectory(root);
                         break;
-                    case CommandType.GoToDirectory:
+                    case CommandType.GoToDirectory or CommandType.GoToParentDirectory:
+                        ChangeDirectory(root, line);
                         break;
-                    case CommandType.GoToRoot:
-                        break;
-                    case CommandType.GoBackInDirectory:
+                    default:
                         break;
                 }
             }
+            else
+            {
+                Console.WriteLine("LINE IS NOT COMMAND");
+            }
+            
+        }
+        
+        // at most 100_000
+        var atMost = root.SubDirectories.Where(d => d.CalculateSizeOfDirectory() <= 100_000).ToList();
 
+        Console.WriteLine(atMost.Sum());
+    }
 
-
+    private static Directory ChangeDirectory(Directory directory, string line)
+    {
+        var splitCommands = line.Split(" ");
+        
+        //Go to ParentDirectory
+        if (splitCommands[2].Equals(".."))
+        {
+            directory = directory.ParentDirectory;
+        }
+        else //Go to SubDirectory
+        {
+            foreach (var dir in directory.SubDirectories)
+            {
+                if (dir.Name.Equals(splitCommands[2], StringComparison.OrdinalIgnoreCase))
+                {
+                    directory = dir;
+                }
+            }
         }
 
+        return directory;
+    }
+
+    private static Directory GetAllValuesAfterListDirectory(Directory directory)
+    {
+        while (_enumerator.MoveNext() && !_enumerator.Current.IsCommand())
+        {
+            string line = _enumerator.Current;
+
+            var splitCommands = line.Split(" ");
+            
+            // Add Subdirectory
+            if (line.StartsWith("dir"))
+            {
+                directory.SubDirectories.Add(new Directory(splitCommands[1], directory));
+            }
+            else // Add files
+            {
+                string fileName = splitCommands[1];
+                decimal fileSize = decimal.Parse(splitCommands[0]);
+                    
+                directory.Files.Add(new File(fileName, fileSize));
+            }
+            
+            _allLines = _allLines.Skip(1).ToList();
+            _auxiliarLines = _allLines;
+            _enumerator = _allLines.GetEnumerator();
+        }
+
+        _enumerator = _auxiliarLines.GetEnumerator();
+        
+        return directory;
     }
 
     private static CommandType GetCommandType(string line)
@@ -64,7 +119,7 @@ public static class Day7
         }
         else if (line.StartsWith(@"$ cd .."))
         {
-            commandType = CommandType.GoBackInDirectory;
+            commandType = CommandType.GoToParentDirectory;
         }
         else if (line.StartsWith(@"$ ls"))
         {
@@ -77,43 +132,54 @@ public static class Day7
 
         return commandType;
     }
-
-    private static bool IsCommand(char c)
+    public class Directory
     {
-        if (c.Equals('$'))
+        public Directory() { }
+        public Directory(string name)
         {
-            return true;
+            Name = name;
+        }
+        public Directory(string name, Directory parentDirectory)
+        {
+            Name = name;
+            ParentDirectory = parentDirectory;
+        }
+        public string Name { get; set; }
+        public decimal? Size { get; set; }
+        public List<File> Files { get; set; } = new();
+        public List<Directory> SubDirectories { get; set; } = new();
+        public Directory ParentDirectory { get; set; }
+        public decimal? CalculateSizeOfDirectory()
+        {
+            decimal? totalSize = 0M;
+
+            if (Files.Any())
+                totalSize += Files.GetSize();
+            if (SubDirectories.Any())
+                totalSize += SubDirectories.GetSize();
+
+            Size = totalSize;
+            return totalSize;
+        }
+    }
+    public class File
+    {
+        public File(string name, decimal size)
+        {
+            Name = name;
+            Size = size;
         }
 
-        return false;
+        public readonly string Name;
+        public readonly decimal Size;
     }
-    
-    
-    
-
-    internal class Directory
-    {
-        public string Name { get; set; }
-        public decimal Size { get; set; }
-        public List<File> Files { get; set; }
-        public List<Directory> SubDirectories { get; set; }
-        
-    }
-
-    internal class File
-    {
-        public string Name { get; set; }
-        public decimal Size { get; set; }
-    }
-    
     internal enum CommandType
     {
         ListDirectory,
         GoToDirectory,
-        GoBackInDirectory,
+        GoToParentDirectory,
         GoToRoot
     }
-
     public static bool IsCommand(this string s)
     {
         if (s[0].Equals('$'))
@@ -123,7 +189,32 @@ public static class Day7
 
         return false;
     }
+    public static decimal? GetSize(this List<Directory> directories)
+    {
+        decimal? totalSize = 0;
+        foreach (var dir in directories)
+        {
+            totalSize += dir.CalculateSizeOfDirectory();
+        }
 
+        return totalSize;
+    }
+    public static decimal? GetSize(this List<File> files)
+    {
+        decimal? totalSize = 0;
+        foreach (var file in files)
+        {
+            totalSize += file.Size;
+        }
+
+        return totalSize;
+    }
+    
+    public static decimal Sum(this List<Directory> directories)
+    {
+        return (directories.Sum(d => d.Size).Value);
+    }
+    
 }
 
 
