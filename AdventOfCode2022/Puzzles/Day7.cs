@@ -11,6 +11,7 @@ public static class Day7
 {
     private static string path = PuzzleUtils.GetFilePath("Day7_Example.txt");
     private static IEnumerator<string> _enumerator;
+    private static IEnumerator<string> _enumeratorTest;
     private static List<string> _allLines = System.IO.File.ReadLines(path).ToList();
     private static List<string> _auxiliarLines = System.IO.File.ReadLines(path).ToList();
     public static void SolutionPart1()
@@ -20,13 +21,17 @@ public static class Day7
         
         //root has 10 files created, not creating new directories..
         
+        //use list outsi
+        
         _enumerator = _allLines.GetEnumerator();
+        _enumeratorTest = _allLines.GetEnumerator();
         while (_enumerator.MoveNext())
         {
             string line = _enumerator.Current;
+            _enumeratorTest.MoveNext();
             
-            _allLines = _allLines.Skip(1).ToList();
-            _enumerator = _allLines.GetEnumerator();
+            // _allLines = _allLines.Skip(1).ToList();
+            // _enumerator = _allLines.GetEnumerator();
 
             if (line.IsCommand())
             {
@@ -83,8 +88,8 @@ public static class Day7
     {
         while (_enumerator.MoveNext() && !_enumerator.Current.IsCommand())
         {
+            _enumeratorTest.MoveNext();
             string line = _enumerator.Current;
-
             var splitCommands = line.Split(" ");
             
             // Add Subdirectory
@@ -100,12 +105,12 @@ public static class Day7
                 directory.Files.Add(new File(fileName, fileSize));
             }
             
-            _allLines = _allLines.Skip(1).ToList();
-            _auxiliarLines = _allLines;
-            _enumerator = _allLines.GetEnumerator();
+            //_allLines = _allLines.Skip(1).ToList();
+            //_auxiliarLines = _allLines;
+            //_enumerator = _allLines.GetEnumerator();
         }
 
-        _enumerator = _auxiliarLines.GetEnumerator();
+        _enumerator = _enumeratorTest;
         
         return directory;
     }
