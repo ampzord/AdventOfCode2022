@@ -29,7 +29,6 @@ public class Directory : IComparable<Directory>
         Size = totalSize;
         return totalSize;
     }
-    
     public int CompareTo(Directory? other)
     {
         if (other == null || Size > other.Size)

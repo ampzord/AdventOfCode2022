@@ -6,11 +6,11 @@ namespace AdventOfCode2022.Puzzles;
 
 public static class Day5
 {
-    private static string path = PuzzleUtils.GetFilePath("Day5.txt");
+    private static string _path = PuzzleUtils.GetFilePath("Day5.txt");
     
     public static void SolutionPart1()
     {
-        var linesInFile = File.ReadAllLines(path);
+        var linesInFile = File.ReadAllLines(_path);
 
         List<Stack> stacks = ParseInput(linesInFile);
         foreach (string line in linesInFile)
@@ -42,7 +42,7 @@ public static class Day5
 
     public static void SolutionPart2()
     {
-        var linesInFile = File.ReadAllLines(path);
+        var linesInFile = File.ReadAllLines(_path);
 
         List<Stack> stacks = ParseInput(linesInFile);
         foreach (string line in linesInFile)
