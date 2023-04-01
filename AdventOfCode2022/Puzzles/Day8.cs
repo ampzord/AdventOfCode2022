@@ -9,28 +9,28 @@ public static class Day8
     private static int outerTrees = 0;
     private static int innerTrees = 0;
     private static int[,] grid;
+    private static int gridLength;
 
     public static void SolutionPart1()
     {
         var userInput = File.ReadAllLines(_path);
-        int gridSize = userInput[0].Length;
+        grid = FillGrid(userInput, userInput[0].Length);
         
-        grid = FillGrid(gridSize, userInput);
-
-        int visibleTrees = GetVisibleTrees(gridSize);
+        int visibleTrees = GetVisibleTrees();
         
         Console.WriteLine($"Outer Trees: {outerTrees}");
         Console.WriteLine($"Inner Trees: {innerTrees}");
         Console.WriteLine($"Total Trees: {visibleTrees}");
     }
 
-    private static int[,] FillGrid(int gridSize, string[] userInput)
+    private static int[,] FillGrid(string[] userInput, int gridSize)
     {
         grid = new int[gridSize, gridSize];
+        gridLength = grid.GetLength(0);
         
-        for (int i = 0; i < gridSize; i++)
+        for (int i = 0; i < gridLength; i++)
         {
-            for (int j = 0; j < gridSize; j++)
+            for (int j = 0; j < gridLength; j++)
             {
                 var input = userInput[i].ToCharArray();
                 var inputNumber = int.Parse(input[j].ToString());
@@ -41,15 +41,15 @@ public static class Day8
         return grid;
     }
 
-    private static int GetVisibleTrees(int gridSize)
+    private static int GetVisibleTrees()
     {
         int visibleTrees = 0;
         
-        for (int i = 0; i < gridSize; i++)
+        for (int i = 0; i < gridLength; i++)
         {
-            for (int j = 0; j < gridSize; j++)
+            for (int j = 0; j < gridLength; j++)
             {
-                if (IsTreeVisibleInIndex(gridSize, i, j))
+                if (IsTreeVisibleInIndex( i, j))
                 {
                     visibleTrees++;
                 }
@@ -59,13 +59,13 @@ public static class Day8
         return visibleTrees;
     }
 
-    private static bool IsTreeVisibleInIndex(int gridSize,int row, int column)
+    private static bool IsTreeVisibleInIndex(int row, int column)
     {
-        if (IsOuterTree(row, column, gridSize))
+        if (IsOuterTree(row, column))
             return true;
         
-        if (IsTreeVisibleFromTop(gridSize, row, column) || IsTreeVisibleFromRight(gridSize, row, column) || 
-            IsTreeVisibleFromLeft(gridSize, row, column) || IsTreeVisibleFromBottom(gridSize, row, column))
+        if (IsTreeVisibleFromTop(row, column) || IsTreeVisibleFromRight(row, column) || 
+            IsTreeVisibleFromLeft(row, column) || IsTreeVisibleFromBottom(row, column))
         {
             return true;
         }
@@ -73,11 +73,11 @@ public static class Day8
         return false;
     }
 
-    private static bool IsTreeVisibleFromBottom(int gridSize, int row, int column)
+    private static bool IsTreeVisibleFromBottom(int row, int column)
     {
         int currentValue = grid[row, column];
         
-        for (int i = row + 1; i < gridSize; i++)
+        for (int i = row + 1; i < gridLength; i++)
         {
             if (grid[i, column] >= currentValue)
             {
@@ -89,7 +89,7 @@ public static class Day8
         return true;
     }
 
-    private static bool IsTreeVisibleFromLeft(int gridSize, int row, int column)
+    private static bool IsTreeVisibleFromLeft(int row, int column)
     {
         int currentValue = grid[row, column];
         
@@ -105,11 +105,11 @@ public static class Day8
         return true;
     }
 
-    private static bool IsTreeVisibleFromRight(int gridSize, int row, int column)
+    private static bool IsTreeVisibleFromRight(int row, int column)
     {
         int currentValue = grid[row, column];
         
-        for (int i = column + 1; i < gridSize; i++)
+        for (int i = column + 1; i < gridLength; i++)
         {
             if (grid[row, i] >= currentValue)
             {
@@ -121,7 +121,7 @@ public static class Day8
         return true;
     }
 
-    private static bool IsTreeVisibleFromTop(int gridSize, int row, int column)
+    private static bool IsTreeVisibleFromTop(int row, int column)
     {
         int currentValue = grid[row, column];
         
@@ -136,27 +136,16 @@ public static class Day8
         innerTrees++;
         return true;
     }
-
-    // Outer trees visible is n + n-1 + n-1 + n-2
-    private static int GetOuterTreesVisible(int n)
+    
+    private static bool IsOuterTree(int row, int column)
     {
-        return n + n - 1 + n - 1 + n - 2;
-    }
-
-    private static bool IsOuterTree(int row, int column, int gridSize)
-    {
-        if (row == 0 || column == 0)
+        if (row == 0 || column == 0
+            || row == gridLength - 1 || column == gridLength - 1)
         {
             outerTrees++;
             return true;
         }
-
-        if (row == gridSize - 1 || column == gridSize - 1)
-        {
-            outerTrees++;
-            return true;
-        }
-
+        
         return false;
     }
 }
