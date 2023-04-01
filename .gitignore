@@ -11,7 +11,7 @@
 *.sln.docstates
 ./idea/*
 AdventOfCode2022/.idea/*
-idea/*
+.idea/*
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
