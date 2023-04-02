@@ -3,11 +3,9 @@
 namespace AdventOfCode2022.Puzzles;
 public static class Day4
 {
-    private static string _path = PuzzleUtils.GetFilePath("Day4.txt");
-    
     public static void SolutionPart1()
     {
-        var linesInFile = File.ReadAllLines(_path);
+        var linesInFile = File.ReadAllLines(@"Input\Day4.txt");
 
         int totalOverridenActivities = 0;
         foreach (string line in linesInFile)
@@ -25,7 +23,7 @@ public static class Day4
 
     public static void SolutionPart2()
     {
-        var linesInFile = File.ReadAllLines(_path);
+        var linesInFile = File.ReadAllLines(@"Input\Day4.txt");
 
         int totalOverlappingActivities = 0;
         foreach (string line in linesInFile)

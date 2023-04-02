@@ -4,8 +4,7 @@ namespace AdventOfCode2022.Puzzles.Day7;
 
 public static class Day7
 {
-    private static readonly string _path = PuzzleUtils.GetFilePath("Day7.txt");
-    private static readonly List<string> _allLines = System.IO.File.ReadLines(_path).ToList();
+    private static readonly List<string> _allLines = System.IO.File.ReadAllLines(@"Input\Day8.txt").ToList();
     private const long MaxSize = 100_000;
     private const long TotalAvailableSpaceInDisk = 70_000_000;
     private const long AvailableSpaceInDiskNeeded = 30_000_000;

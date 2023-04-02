@@ -4,12 +4,11 @@ namespace AdventOfCode2022.Puzzles;
 
 public static class Day6
 {
-    private static string _path = PuzzleUtils.GetFilePath("Day6.txt");
     private const int PROTOCOL_SEQUENCE_VALUE = 14; // solution2
     
     public static void SolutionPart1()
     {
-        var input = File.ReadAllText(_path);
+        var input = File.ReadAllText(@"Input\Day6.txt");
 
         int characterLengthSignal = CalculateSignal(input);
 

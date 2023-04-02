@@ -15,8 +15,7 @@ public static class Day2
 
     public static void Solution()
     {
-        string path = PuzzleUtils.GetFilePath("Day2.txt");
-        var linesInFile = File.ReadAllLines(path);
+        var linesInFile = File.ReadAllLines(@"Input\Day2.txt");
 
         newPossiblePlays = new Dictionary<Dictionary<string, string>, string>
         {

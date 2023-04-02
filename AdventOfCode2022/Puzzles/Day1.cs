@@ -6,8 +6,7 @@ public static class Day1
 {
     public static void Solution()
     {
-        string path = PuzzleUtils.GetFilePath("Day1.txt");
-        var linesInFile = File.ReadAllLines(path);
+        var linesInFile = File.ReadAllLines(@"Input\Day1.txt");
 
         int currentCalories = 0;
         List<int> currCalories = new List<int>();
