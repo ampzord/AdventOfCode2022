@@ -2,15 +2,21 @@
 
 public static class Day9
 {
-    private static string[] userInput = File.ReadAllLines(@"Input\Day9.txt");
+    private static readonly string[] _userInput = File.ReadAllLines(@"Input\Day9.txt");
+    
     public static void SolutionPart1()
     {
         Board board = new Board(5, 6);
 
-        foreach (var input in userInput)
+        foreach (var input in _userInput)
         {
             var parsedInput = ParseInput(input);
-            board.MoveRope(parsedInput);
+            var direction = parsedInput.Item1;
+            
+            if (board.IsValidMove(direction))
+            {
+                board.Move(parsedInput);
+            }
         }
         
     }
