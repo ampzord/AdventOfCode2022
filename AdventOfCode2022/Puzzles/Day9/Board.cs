@@ -10,27 +10,54 @@ public class Board
     public RopePosition RopePosition { get; set; }
     public Position StartingPosition { get; set; }
     public char[,] Grid { get; set; }
-    public int[,] VisitedGrid { get; set; } 
+    public HashSet<Tuple<int,int>> VisitedGrid;
 
     public Board(int rows, int columns)
     {
         Grid = new char[rows, columns];
-        VisitedGrid = new int[rows, columns];
-        StartingPosition = new Position(rows - 1, 0);
+        StartingPosition = new Position(rows / 2, columns / 2);
         RopePosition = new RopePosition(StartingPosition, StartingPosition);
         _rows = rows;
         _columns = columns;
+        VisitedGrid = new HashSet<Tuple<int, int>>();
     }
 
     public void Move(Tuple<Direction, int> move)
     {
-        //move head
-        MoveHead(move.Item1);
-
-        //move tail
-        MoveTail();
-
-        //update VisitedGrid
+        int moveAmount = move.Item2;
+        while (moveAmount > 0)
+        {
+            if (!IsValidMove(move.Item1))
+                break;
+            
+            var oldHeadPosition = MoveHead(move.Item1);
+            if (!RopePosition.IsTailNearHead())
+            {
+                MoveTail(oldHeadPosition);
+                UpdateTailVisited(); 
+            }
+            
+            moveAmount--;
+        }
+    }
+    
+    public void Move_Part2(Tuple<Direction, int> move, int knotDistance)
+    {
+        int moveAmount = move.Item2;
+        while (moveAmount > 0)
+        {
+            if (!IsValidMove(move.Item1))
+                break;
+            
+            var oldHeadPosition = MoveHead(move.Item1);
+            if (!RopePosition.IsTailNearHead())
+            {
+                MoveTail(oldHeadPosition);
+                UpdateTailVisited(); 
+            }
+            
+            moveAmount--;
+        }
     }
     
     public bool IsValidMove(Direction direction)
@@ -45,7 +72,7 @@ public class Board
             _ => throw new InvalidEnumArgumentException("Direction is not valid.")
         };
         
-        return IsOutOfBounds(newPosition);
+        return !IsOutOfBounds(newPosition);
     }
 
     private bool IsOutOfBounds(Position newPosition)
@@ -54,7 +81,7 @@ public class Board
                newPosition.Column < 0 || newPosition.Column > _columns - 1;
     }
 
-    private void MoveHead(Direction direction)
+    private Position MoveHead(Direction direction)
     {
         Position oldPosition = RopePosition.Head;
         
@@ -68,14 +95,22 @@ public class Board
         };
 
         RopePosition.Head = newPosition;
+        return oldPosition;
     }
     
-    private void MoveTail()
+    private void MoveTail(Position oldHeadPosition)
     {
-        throw new NotImplementedException();
+        RopePosition.Tail = oldHeadPosition;
     }
-    
+    public void UpdateTailVisited()
+    {
+        var tupleVisit = Tuple.Create(RopePosition.Tail.Row, RopePosition.Tail.Column);
+        VisitedGrid.Add(tupleVisit);
+    }
 
-    
+    public int VisitedPositionsByTail()
+    {
+        return VisitedGrid.Count;
+    }
     
 }

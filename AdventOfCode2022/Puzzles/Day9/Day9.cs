@@ -3,22 +3,38 @@
 public static class Day9
 {
     private static readonly string[] _userInput = File.ReadAllLines(@"Input\Day9.txt");
-    
+
+    /// <summary>
+    /// Solution Part 1 done with OutOfBounds verification
+    /// </summary>
     public static void SolutionPart1()
     {
-        Board board = new Board(5, 6);
+        var board = new Board(1000, 1000);
 
         foreach (var input in _userInput)
         {
             var parsedInput = ParseInput(input);
-            var direction = parsedInput.Item1;
-            
-            if (board.IsValidMove(direction))
-            {
-                board.Move(parsedInput);
-            }
+            board.Move(parsedInput);
         }
         
+        Console.WriteLine($"Visited Positions by Tail: {board.VisitedPositionsByTail()}");
+    }
+    
+    /// <summary>
+    /// Solution Part 2 done with OutOfBounds verification
+    /// </summary>
+    public static void SolutionPart2()
+    {
+        int knotLevel = 9;
+        var board = new Board(1000, 1000);
+
+        foreach (var input in _userInput)
+        {
+            var parsedInput = ParseInput(input);
+            board.Move_Part2(parsedInput, knotLevel);
+        }
+        
+        Console.WriteLine($"Visited Positions by Tail: {board.VisitedPositionsByTail()}");
     }
 
     private static Tuple<Direction, int> ParseInput(string input)
@@ -43,6 +59,4 @@ public static class Day9
         
         return Tuple.Create(direction, steps);
     }
-    
-    
 }
