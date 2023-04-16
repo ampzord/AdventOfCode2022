@@ -7,19 +7,21 @@ public class Board
 {
     private readonly int _rows;
     private readonly int _columns;
-    public RopePosition RopePosition { get; set; }
+    private readonly int _knotLevel;
+    public RopePosition Rope { get; set; }
     public Position StartingPosition { get; set; }
     public char[,] Grid { get; set; }
     public HashSet<Tuple<int,int>> VisitedGrid;
 
-    public Board(int rows, int columns)
+    public Board(int rows, int columns, int knotLevel)
     {
         Grid = new char[rows, columns];
         StartingPosition = new Position(rows / 2, columns / 2);
-        RopePosition = new RopePosition(StartingPosition, StartingPosition);
+        Rope = new RopePosition(StartingPosition, StartingPosition, knotLevel);
         _rows = rows;
         _columns = columns;
         VisitedGrid = new HashSet<Tuple<int, int>>();
+        _knotLevel = knotLevel;
     }
 
     public void Move(Tuple<Direction, int> move)
@@ -31,7 +33,7 @@ public class Board
                 break;
             
             var oldHeadPosition = MoveHead(move.Item1);
-            if (!RopePosition.IsTailNearHead())
+            if (!Rope.IsTailNearHead())
             {
                 MoveTail(oldHeadPosition);
                 UpdateTailVisited(); 
@@ -50,7 +52,7 @@ public class Board
                 break;
             
             var oldHeadPosition = MoveHead(move.Item1);
-            if (!RopePosition.IsTailNearHead())
+            if (!Rope.IsTailNearHead())
             {
                 MoveTail(oldHeadPosition);
                 UpdateTailVisited(); 
@@ -62,7 +64,7 @@ public class Board
     
     public bool IsValidMove(Direction direction)
     {
-        Position oldPosition = RopePosition.Head;
+        Position oldPosition = Rope.Head;
         Position newPosition = direction switch
         {
             Direction.Up => new Position(oldPosition.Row - 1, oldPosition.Column),
@@ -83,7 +85,7 @@ public class Board
 
     private Position MoveHead(Direction direction)
     {
-        Position oldPosition = RopePosition.Head;
+        Position oldPosition = Rope.Head;
         
         Position newPosition = direction switch
         {
@@ -94,17 +96,17 @@ public class Board
             _ => throw new InvalidEnumArgumentException("Direction is not valid.")
         };
 
-        RopePosition.Head = newPosition;
+        Rope.Head = newPosition;
         return oldPosition;
     }
     
     private void MoveTail(Position oldHeadPosition)
     {
-        RopePosition.Tail = oldHeadPosition;
+        Rope.Tail = oldHeadPosition;
     }
     public void UpdateTailVisited()
     {
-        var tupleVisit = Tuple.Create(RopePosition.Tail.Row, RopePosition.Tail.Column);
+        var tupleVisit = Tuple.Create(Rope.Tail.Row, Rope.Tail.Column);
         VisitedGrid.Add(tupleVisit);
     }
 

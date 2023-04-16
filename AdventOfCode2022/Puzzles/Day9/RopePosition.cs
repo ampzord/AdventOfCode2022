@@ -2,15 +2,21 @@
 
 public class RopePosition
 {
+    private readonly int _knotLevel;
     public Position Head { get; set; }
     public Position Tail { get; set; }
+    public Position[] Knots { get; set; }
 
-    public RopePosition(Position head, Position tail)
+    public RopePosition(Position head, Position tail, int knotLevel)
     {
-        Head = head;
-        Tail = tail;
+        _knotLevel = knotLevel;
+        Knots = new Position[knotLevel];
+        Head = Knots[0];
+        Tail = Knots[knotLevel - 1];
     }
-
+    
+    //verify in array if is Near
+    //TODO 
     public bool IsTailNearHead()
     {
         // Same Position

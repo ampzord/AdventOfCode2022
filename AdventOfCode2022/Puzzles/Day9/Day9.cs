@@ -9,7 +9,8 @@ public static class Day9
     /// </summary>
     public static void SolutionPart1()
     {
-        var board = new Board(1000, 1000);
+        int knotLevel = 2;
+        var board = new Board(1000, 1000, knotLevel);
 
         foreach (var input in _userInput)
         {
@@ -26,7 +27,7 @@ public static class Day9
     public static void SolutionPart2()
     {
         int knotLevel = 9;
-        var board = new Board(1000, 1000);
+        var board = new Board(1000, 1000, knotLevel);
 
         foreach (var input in _userInput)
         {
