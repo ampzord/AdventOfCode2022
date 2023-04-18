@@ -2,7 +2,7 @@
 
 public class RopePosition
 {
-    private readonly int _knotLevel;
+    private int _knotLevel { get; }
     public Position Head { get; set; }
     public Position Tail { get; set; }
     public Position[] Knots { get; set; }
@@ -13,6 +13,19 @@ public class RopePosition
         Knots = new Position[knotLevel];
         Head = Knots[0];
         Tail = Knots[knotLevel - 1];
+    }
+    /// <summary>
+    /// We declare rope movement if next item movement in array is not "Near" the previous item
+    /// </summary>
+    /// <returns></returns>
+    public bool IsRopeMovement()
+    {
+        for (int i = 0; i < Knots.Length; i++)
+        {
+            // if (Knots[i].
+        }
+
+        return false;
     }
     
     //verify in array if is Near
