@@ -3,14 +3,14 @@
 public static class Day9
 {
     private static readonly string[] _userInput = File.ReadAllLines(@"Input\Day9.txt");
+    private const int knotDistance = 10;
 
     /// <summary>
     /// Solution Part 1 done with OutOfBounds verification
     /// </summary>
     public static void SolutionPart1()
     {
-        int knotLevel = 2;
-        var board = new Board(1000, 1000, knotLevel);
+        var board = new Board(1000, 1000, knotDistance);
 
         foreach (var input in _userInput)
         {
@@ -26,13 +26,12 @@ public static class Day9
     /// </summary>
     public static void SolutionPart2()
     {
-        int knotLevel = 9;
-        var board = new Board(1000, 1000, knotLevel);
+        var board = new Board(2000, 2000, knotDistance);
 
         foreach (var input in _userInput)
         {
             var parsedInput = ParseInput(input);
-            board.Move_Part2(parsedInput, knotLevel);
+            board.Move_Part2(parsedInput);
         }
         
         Console.WriteLine($"Visited Positions by Tail: {board.VisitedPositionsByTail()}");
