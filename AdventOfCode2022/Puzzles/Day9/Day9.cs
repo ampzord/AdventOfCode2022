@@ -3,35 +3,20 @@
 public static class Day9
 {
     private static readonly string[] _userInput = File.ReadAllLines(@"Input\Day9.txt");
-    private const int knotDistance = 10;
-
+    private const int knotDistancePart1 = 2;
+    private const int knotDistancePart2 = 10;
+    
     /// <summary>
-    /// Solution Part 1 done with OutOfBounds verification
+    /// Solution done with OutOfBounds verification
     /// </summary>
-    public static void SolutionPart1()
+    public static void SolutionPart2()
     {
-        var board = new Board(1000, 1000, knotDistance);
+        var board = new Board(2000, 2000, knotDistancePart2);
 
         foreach (var input in _userInput)
         {
             var parsedInput = ParseInput(input);
             board.Move(parsedInput);
-        }
-        
-        Console.WriteLine($"Visited Positions by Tail: {board.VisitedPositionsByTail()}");
-    }
-    
-    /// <summary>
-    /// Solution Part 2 done with OutOfBounds verification
-    /// </summary>
-    public static void SolutionPart2()
-    {
-        var board = new Board(2000, 2000, knotDistance);
-
-        foreach (var input in _userInput)
-        {
-            var parsedInput = ParseInput(input);
-            board.Move_Part2(parsedInput);
         }
         
         Console.WriteLine($"Visited Positions by Tail: {board.VisitedPositionsByTail()}");

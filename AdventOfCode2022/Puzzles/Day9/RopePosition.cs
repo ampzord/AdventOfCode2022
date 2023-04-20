@@ -16,51 +16,44 @@ public class RopePosition
         set => Rope[_knotLength - 1] = value;
     }
     
-    public Position[] Rope { get; set; }
+    public Position[] Rope { get; }
 
     public RopePosition(Position startPosition, int knotLength)
     {
         _knotLength = knotLength;
         Rope = Enumerable.Repeat(startPosition, knotLength).ToArray();
     }
-    /// <summary>
-    /// We declare rope movement if next item movement in array is not "Near" the previous item
-    /// </summary>
-    /// <returns></returns>
-    public void MoveRestOfRope(Position oldPositionv2)
+
+    public Position MoveTail(Position head, Position tail)
     {
-        // Starting on index 1
-        for (int i = 1; i < Rope.Length - 1; i++)
-        {
-            Position oldPositionOfPreviousIndex = Rope[i];
-            if (!IsBackOfTheRopeNear(i, out var oldPosition))
-            {
-                Rope[i + 1] = oldPositionv2;
-            }
-        }
+        int dx = head.Column - tail.Column;
+        int dy = head.Row - tail.Row;
         
+        if (!IsRopeNear(head, tail))
+        {
+            tail = new Position(tail.Row + Math.Sign(dy), tail.Column + Math.Sign(dx));
+        }
+
+        return tail;
     }
-
-    public bool IsBackOfTheRopeNear(int index, out Position frontRopePart)
+    
+    public bool IsRopeNear(Position front, Position back)
     {
-        frontRopePart = Rope[index];
-        Position otherRopeBody = Rope[index + 1];
-
         // Same Position
-        if (frontRopePart.Equals(otherRopeBody))
+        if (front.Equals(back))
             return true;
 
         // Diagonally
-        if (frontRopePart.IsNear(otherRopeBody, -1, -1) || frontRopePart.IsNear(otherRopeBody, -1, 1) ||
-            frontRopePart.IsNear(otherRopeBody, 1, 1) || frontRopePart.IsNear(otherRopeBody, 1, -1))
+        if (front.IsNear(back, -1, -1) || front.IsNear(back, -1, 1) ||
+            front.IsNear(back, 1, 1) || front.IsNear(back, 1, -1))
             return true;
         
         // Vertically
-        if (frontRopePart.IsNear(otherRopeBody, row: -1) || frontRopePart.IsNear(otherRopeBody, row: 1))
+        if (front.IsNear(back, row: -1) || front.IsNear(back, row: 1))
             return true;
         
         // Horizontally
-        if (frontRopePart.IsNear(otherRopeBody, column: -1) || frontRopePart.IsNear(otherRopeBody, column: 1))
+        if (front.IsNear(back, column: -1) || front.IsNear(back, column: 1))
             return true;
         
         return false; 

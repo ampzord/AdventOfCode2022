@@ -7,10 +7,10 @@ public class Board
 {
     private readonly int _rows;
     private readonly int _columns;
-    public RopePosition RopePos { get; set; }
-    public Position StartingPosition { get; set; }
-    public char[,] Grid { get; set; }
-    public HashSet<Tuple<int,int>> VisitedGrid;
+    private RopePosition RopePos { get; }
+    private Position StartingPosition { get; }
+    private char[,] Grid { get; }
+    private HashSet<Tuple<int,int>> VisitedGrid;
 
     public Board(int rows, int columns, int knotLength)
     {
@@ -21,27 +21,8 @@ public class Board
         _columns = columns;
         VisitedGrid = new HashSet<Tuple<int, int>>();
     }
-
-    public void Move(Tuple<Direction, int> move)
-    {
-        int moveAmount = move.Item2;
-        while (moveAmount > 0)
-        {
-            if (!IsValidMove(move.Item1))
-                break;
-            
-            // var oldHeadPosition = MoveRopeHead(move.Item1);
-            // if (!RopePos.IsTailNearHead())
-            // {
-            //     MoveTail(oldHeadPosition);
-            //     UpdateTailVisited(); 
-            // }
-            
-            moveAmount--;
-        }
-    }
     
-    public void Move_Part2(Tuple<Direction, int> move)
+    public void Move(Tuple<Direction, int> move)
     {
         int moveNumber = move.Item2;
         while (moveNumber > 0)
@@ -56,21 +37,18 @@ public class Board
 
     private void MoveWholeRope(Direction direction)
     {
-        // Move head always
-        MoveRopeHead(direction, out var oldHeadPosition);
+        MoveRopeHead(direction);
         
-        // Verify if the next index close to Head is Near or not
-        if (!RopePos.IsBackOfTheRopeNear(0, out _))
+        for (int i = 0; i < RopePos.Rope.Length - 1; i++)
         {
-            RopePos.Rope[1] = oldHeadPosition;
+            RopePos.Rope[i + 1] = RopePos.MoveTail(RopePos.Rope[i], RopePos.Rope[i+1]);
         }
         
-        RopePos.MoveRestOfRope();
         UpdateTailVisited(); 
     }
     
 
-    public bool IsValidMove(Direction direction)
+    private bool IsValidMove(Direction direction)
     {
         Position oldPosition = RopePos.Head;
         Position newPosition = direction switch
@@ -91,9 +69,9 @@ public class Board
                newPosition.Column < 0 || newPosition.Column > _columns - 1;
     }
 
-    private void MoveRopeHead(Direction direction, out Position oldHeadPosition)
+    private void MoveRopeHead(Direction direction)
     {
-        oldHeadPosition = RopePos.Head;
+        Position oldHeadPosition = RopePos.Head;
         
         Position newPosition = direction switch
         {
